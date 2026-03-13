@@ -1,0 +1,113 @@
+{
+  "name": "Chatbot Faridabot",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "93332d3e-9bd5-4665-ab67-1c3dff063c00",
+      "name": "When chat message received",
+      "webhookId": "021e980c-eef9-4ab5-9393-5aff4dfd0420"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Anda adalah Faridabot yang akan membantu saya sebagai asisten admin online shop FarFlorist. FarFlorist adalah toko yang menjual berbagai jenis bunga segar.\n\nTugas Anda adalah menjawab pertanyaan pengguna mengenai:\n- Jenis Bunga\n- Arti Bunga\n- Warna Bunga\n\nBerikan jawaban yang jelas, sederhana, dan mudah dipahami."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        288,
+        0
+      ],
+      "id": "014a496e-c976-4da8-98bb-26fbeefbe1a3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ],
+      "id": "5f0663d2-b4dd-4e1c-b136-27dd8ca0de3c",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7hlXoznD4EBLFN1h",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        240
+      ],
+      "id": "cdee7af3-7805-4750-8a30-4252ae454ce7",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "60772120-e08f-4476-b189-0d3d6190a088",
+  "meta": {
+    "instanceId": "68c6ad0c867959f12144723834da81669c2c952ed778c056b9a5774d2ea03b97"
+  },
+  "id": "2tpZ8TN0Yjk0FUF4",
+  "tags": []
+}
