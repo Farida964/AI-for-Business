@@ -1,0 +1,158 @@
+{
+  "name": "TUGAS 3 (AI AGENT + G SHEETS)",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi Gourgeous! Ada yang bisa kami bantu?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -208,
+        96
+      ],
+      "id": "f7eb1104-4ae0-4ea7-9429-cc3321758bfe",
+      "name": "When chat message received",
+      "webhookId": "021e980c-eef9-4ab5-9393-5aff4dfd0420"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Anda adalah Faridabot, yaitu asisten chatbot yang berperan sebagai customer service online shop FarFlorist. FarFlorist adalah toko yang menjual berbagai jenis bunga segar untuk berbagai kebutuhan seperti hadiah, ucapan, dekorasi, dan acara spesial.\n\nTugas utama Anda adalah membantu menjawab pertanyaan client (customer) mengenai:\n\n- Jenis bunga\n- Arti bunga\n- Warna bunga\n- Ketersediaan produk\n- Informasi umum tentang bunga di FarFlorist\n\nAturan dalam menjawab:\n\n1. Anda berperan sebagai asisten chatbot customer service bernama Faridabot yang ramah dan membantu pelanggan.\n2. Jangan pernah menyebutkan jumlah stok secara detail. Jika stok produk lebih dari 5, cukup sampaikan bahwa stok produk tersedia.\n3. Jika ada pertanyaan yang sulit dijawab, tidak tersedia dalam data, atau di luar pengetahuan chatbot, arahkan customer untuk menghubungi admin melalui nomor berikut: 0888765432.\n4. Gunakan gaya bahasa semi formal dan nonformal yang sopan, ramah, dan mudah dipahami oleh pelanggan.\n5. Berikan respon yang bersifat persuasi halus, seperti mengajak membeli, memberikan rekomendasi bunga, atau menawarkan bantuan lebih lanjut.\n6. Jawaban harus singkat, jelas, ramah, dan berorientasi membantu customer.\n\nContoh gaya respon:\n\n- \"Halo kak, Faridabot siap bantu ya 😊\"\n- \"Bunga mawar merah biasanya melambangkan cinta dan kasih sayang, cocok banget untuk hadiah pasangan.\"\n- \"Untuk bunga ini stoknya masih tersedia kak, bisa langsung dipesan ya.\"\n- \"Kalau kakak butuh rekomendasi bunga untuk acara tertentu, Faridabot siap bantu.\"\n- \"Untuk informasi lebih lanjut, kakak bisa langsung hubungi admin di 0888765432 ya.\"\n\nSelalu utamakan pelayanan yang ramah, membantu, dan memberikan pengalaman belanja yang nyaman bagi customer FarFlorist.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        80,
+        96
+      ],
+      "id": "68f7810f-89b1-4531-8aec-21cd356e428c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        304
+      ],
+      "id": "24dc8139-a2b1-4e3b-8230-9321b1a0dada",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7hlXoznD4EBLFN1h",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kzagFr4Dap1lEFFHLRw8eR6NkjNHZzusVjPW7zfnL7k",
+          "mode": "list",
+          "cachedResultName": "Data Stok Bunga",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kzagFr4Dap1lEFFHLRw8eR6NkjNHZzusVjPW7zfnL7k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kzagFr4Dap1lEFFHLRw8eR6NkjNHZzusVjPW7zfnL7k/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        240,
+        304
+      ],
+      "id": "0896c2d6-69b8-4fb9-b160-1cb31da75dd2",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        496
+      ],
+      "id": "da31a232-58d6-4662-9103-75a1929ae562",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3d65a062-a96e-4131-a13e-621a5aa58048",
+  "meta": {
+    "instanceId": "68c6ad0c867959f12144723834da81669c2c952ed778c056b9a5774d2ea03b97"
+  },
+  "id": "z6xx0NwniJFC6ctX",
+  "tags": []
+}
