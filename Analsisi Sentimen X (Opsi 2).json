@@ -1,0 +1,493 @@
+{
+  "name": "Analsisi Sentimen X (Opsi 2)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -272,
+        -192
+      ],
+      "id": "816d7afc-8cac-49c0-84a3-2960081c829b",
+      "name": "Setiap 15 menit"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -192
+      ],
+      "id": "b7437635-c7dd-4329-919d-8dbc6b3a5488",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1_S6n36GYtuT17etEW_ona6J9qwHapphXJcfqwMXG8xc",
+          "mode": "list",
+          "cachedResultName": "Analisis Sentimen Harian ($BTCH_$ETH)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_S6n36GYtuT17etEW_ona6J9qwHapphXJcfqwMXG8xc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_S6n36GYtuT17etEW_ona6J9qwHapphXJcfqwMXG8xc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.Timestamp }}",
+            "Tweet_ID": "={{ $json.Tweet_ID }}",
+            "Tweet_Text": "={{ $json.Tweet_Text }}",
+            "Sentiment": "={{ $json.Sentiment }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tweet_ID",
+              "displayName": "Tweet_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tweet_Text",
+              "displayName": "Tweet_Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sentiment",
+              "displayName": "Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        944,
+        -192
+      ],
+      "id": "7df0a201-7468-465f-932d-919068af2b7e",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://scrapebadger.com/v1/twitter/tweets/advanced_search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "\"$BTC OR $ETH\""
+            },
+            {
+              "name": "query_type",
+              "value": "Latest"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "sb_live__h4TpUO8e4ETiExeVszaneQnfrE8-GOPjtbAjpkEo-8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -80,
+        -192
+      ],
+      "id": "31bd2b28-825d-421c-a440-efbbf6da28a8",
+      "name": "Pengambil data"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the sentiment of the following tweet.\n\nRespond with ONLY one word from this list:\nPositive\nNegative\nNeutral\n\nNo explanation.\nNo punctuation.\n\nTweet:\n{{ $json.text }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        352,
+        -192
+      ],
+      "id": "b4a27099-07f9-45d7-962d-b1ce2aea9e53",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        608,
+        32
+      ],
+      "id": "8a075965-b830-4ec5-adaf-2fc74fe5a575",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "0CVeWi2g4sE7GBfa",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eeae3977-73b9-403f-9502-a28ae896dc0c",
+              "name": "Timestamp",
+              "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+              "type": "string"
+            },
+            {
+              "id": "c989a65b-b895-433c-9555-ab6e968b0602",
+              "name": "Tweet_ID",
+              "value": "={{ $('Split Out').item.json.user?.id || $('Split Out').item.json.author?.id || $('Split Out').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "594fd4d3-e0cf-49f3-be25-ee7a3728141a",
+              "name": "Tweet_Text",
+              "value": "={{ $('Split Out').item.json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "30189d16-597a-481d-b0b0-fbcb5ffab9c1",
+              "name": "Sentiment",
+              "value": "={{ $json.response || $json.output || $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        -192
+      ],
+      "id": "95dbc5f7-891d-45fd-a5d7-c34fdabca7a9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\n\nlet positive = 0;\nlet negative = 0;\nlet neutral = 0;\n\nfor (const row of rows) {\n  const sentiment = (row.json.Sentiment || \"\").toLowerCase();\n\n  if (sentiment.includes(\"positive\")) positive++;\n  else if (sentiment.includes(\"negative\")) negative++;\n  else if (sentiment.includes(\"neutral\")) neutral++;\n}\n\nconst total = positive + negative + neutral;\n\nconst positive_pct = total ? ((positive / total) * 100).toFixed(2) : 0;\nconst negative_pct = total ? ((negative / total) * 100).toFixed(2) : 0;\nconst neutral_pct = total ? ((neutral / total) * 100).toFixed(2) : 0;\n\nlet dominant = \"Neutral\";\nlet max = Math.max(positive, negative, neutral);\n\nif (max === positive) dominant = \"Positive\";\nif (max === negative) dominant = \"Negative\";\n\nreturn [\n  {\n    json: {\n      total_tweets: total,\n      sentimen_positif: positive,\n      sentimen_negatif: negative,\n      sentimen_netral: neutral,\n      persentase_positif: positive_pct,\n      persentase_negatif: negative_pct,\n      persentase_netral: neutral_pct,\n      dominasi_sentimen: dominant\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        272
+      ],
+      "id": "e3b68bbf-500d-49d5-b5bc-9d5d3a856e36",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Anda adalah analis pasar kripto profesional.\n\nBerdasarkan data sentimen Twitter/X hari ini terkait BTC dan ETH:\n\n- Total Tweet: {{ $json.total_tweets }}\n- Positif: {{ $json.sentimen_positif }} ({{ $json.persentase_positif }}%)\n- Negatif: {{ $json.sentimen_negatif }} ({{ $json.persentase_negatif }}%)\n- Netral: {{ $json.sentimen_netral }} ({{ $json.persentase_netral }}%)\n\nSentimen dominan: {{ $json.dominasi_sentimen }}\n\nBuat analisis singkat dalam bahasa Indonesia:\n1. Jelaskan kondisi psikologi pasar\n2. Interpretasi tren sentimen\n3. Potensi implikasi terhadap BTC/ETH\n4. Kesimpulan singkat untuk trader\n\nFormat ringkas, profesional, dan cocok dikirim ke Telegram.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        288,
+        272
+      ],
+      "id": "7f62832f-f1c7-4514-a8fe-fb17a2cb06e3",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        224,
+        480
+      ],
+      "id": "8e63b493-863e-48b3-b1d7-0c32aacc41f0",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "0CVeWi2g4sE7GBfa",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1035054823",
+        "text": "={{ ($json.response || $json.text || $json.output).replace(/[*_[\\]()~`>#+=|{}.!-]/g, '') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        272
+      ],
+      "id": "e1ff2233-3154-4918-8037-46683c26b9ef",
+      "name": "Send a text message",
+      "webhookId": "5ac5b3bf-6e77-43f6-9c96-4fe3b35c14eb",
+      "credentials": {
+        "telegramApi": {
+          "id": "2biIohnEM3m8Xyn7",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -336,
+        272
+      ],
+      "id": "666bc829-bed2-42ff-a5ba-e268f3114794",
+      "name": "Setiap Jam 7 Pagi"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1_S6n36GYtuT17etEW_ona6J9qwHapphXJcfqwMXG8xc",
+          "mode": "list",
+          "cachedResultName": "Analisis Sentimen Harian ($BTCH_$ETH)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_S6n36GYtuT17etEW_ona6J9qwHapphXJcfqwMXG8xc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_S6n36GYtuT17etEW_ona6J9qwHapphXJcfqwMXG8xc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -96,
+        272
+      ],
+      "id": "bf779b20-0082-48bc-aff5-67f83502dccb",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Setiap 15 menit": {
+      "main": [
+        [
+          {
+            "node": "Pengambil data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pengambil data": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setiap Jam 7 Pagi": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "53421df9-684c-4e00-b8a3-9b92f55db9d4",
+  "meta": {
+    "instanceId": "68c6ad0c867959f12144723834da81669c2c952ed778c056b9a5774d2ea03b97"
+  },
+  "id": "R9OgjZbKzFXhxmQW",
+  "tags": []
+}

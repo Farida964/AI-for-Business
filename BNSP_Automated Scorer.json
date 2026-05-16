@@ -1,0 +1,519 @@
+{
+  "name": "BNSP_Automated Scorer",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        496,
+        256
+      ],
+      "id": "155166b3-00e4-4a88-a718-44840582b9e9",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "0CVeWi2g4sE7GBfa",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Anda adalah AI HR Analyst dan Technical Recruiter yang ahli dalam merekrut kandidat IT dan Tenaga Pengajar IT (Instruktur/Trainer).\n\nTugas Anda adalah:\n1. Menganalisis isi CV kandidat.\n2. Mengidentifikasi skill teknis IT.\n3. Menilai pengalaman mengajar/trainer.\n4. Memberikan skor teknis kandidat berdasarkan posisi yang dilamar.\n5. Memberikan ringkasan profesional singkat.\n\nPosisi yang dilamar kandidat:\n{{ $('On form submission').item.json['Posisi yang Diinginkan'] }}\n\nAnalisis CV berikut:\n\n{{ $json.clean_text }}\n\nHasilkan HANYA output JSON VALID dengan struktur PERSIS seperti ini:\n\n{\n  \"it_keywords\": [],\n  \"teaching_keywords\": [],\n  \"category\": {\n    \"devops\": [],\n    \"backend\": [],\n    \"frontend\": [],\n    \"cybersecurity\": [],\n    \"cloud\": [],\n    \"networking\": []\n  },\n  \"it_difficulty_score\": \"\",\n  \"teaching_score\": \"\",\n  \"summary\": \"\"\n}\n\nAturan Wajib:\n- \"it_keywords\":\n  Maksimal 10 skill/teknologi IT paling kuat dari kandidat.\n  Contoh: \"Python\", \"Laravel\", \"Docker\", \"Kubernetes\", \"React.js\"\n\n- \"teaching_keywords\":\n  Maksimal 5 keyword terkait mengajar/pelatihan.\n  Contoh:\n  \"trainer\", \"instruktur\", \"dosen\", \"mentor\", \"pelatihan\"\n\n- \"category\":\n  Kelompokkan skill sesuai kategori berikut:\n  - devops\n  - backend\n  - frontend\n  - cybersecurity\n  - cloud\n  - networking\n\n- \"it_difficulty_score\":\n  Berikan skor 1-10 berdasarkan:\n  - kompleksitas skill teknis\n  - pengalaman kerja\n  - tools/framework\n  - relevansi dengan posisi yang dilamar\n\n- \"teaching_score\":\n  Berikan skor 1-10 berdasarkan pengalaman:\n  - mengajar\n  - mentoring\n  - pelatihan\n  - instruktur\n  - pembicara seminar/workshop\n\n- \"summary\":\n  Ringkasan profesional maksimal 2 kalimat dalam Bahasa Indonesia.\n\n- Jika data tidak ditemukan:\n  gunakan array kosong []\n\n- Jangan menebak informasi yang tidak ada di CV.\n\nPENTING:\n- Jangan gunakan markdown\n- Jangan gunakan ```json\n- Jangan tambahkan penjelasan apa pun\n- Output HARUS raw JSON valid\n- Tidak boleh ada teks selain JSON",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        464,
+        16
+      ],
+      "id": "13a648f8-bae5-488e-b3cc-741f9ade814a",
+      "name": "Scoring Kandidat"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText = $json.text;\n\n// ambil JSON antara { sampai }\nconst match = rawText.match(/\\{[\\s\\S]*\\}/);\n\nif (!match) {\n  throw new Error(\"JSON tidak ditemukan\");\n}\n\ntry {\n  const jsonData = JSON.parse(match[0]);\n  return [{ json: jsonData }];\n} catch (error) {\n  throw new Error(\"Parse JSON gagal: \" + error);\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        16
+      ],
+      "id": "53b0b497-3137-4cac-97ac-ba6c9a25bfad",
+      "name": "Parse json from AI"
+    },
+    {
+      "parameters": {
+        "formTitle": "Form Rekrutmen",
+        "formDescription": "Harap isi form dibawah ini sesuai dengan ketentuan yang berlaku.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nama Lengkap"
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Pengalaman",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "<1 tahun"
+                  },
+                  {
+                    "option": "1-3 tahun"
+                  },
+                  {
+                    "option": ">3 tahun"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Posisi yang Diinginkan",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Frontend Developer"
+                  },
+                  {
+                    "option": "Backend Developer"
+                  },
+                  {
+                    "option": "DevOps Engineer"
+                  },
+                  {
+                    "option": "Cyber Security"
+                  },
+                  {
+                    "option": "UI/UX Designer"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Upload CV (PDF)",
+              "fieldType": "file",
+              "acceptFileTypes": "pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -416,
+        16
+      ],
+      "id": "6adb230c-b31e-4f30-a5d2-e4c62c97cd5a",
+      "name": "On form submission",
+      "webhookId": "45fda636-60f2-4836-886b-f447b6fa5acd"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "Upload_CV__PDF_",
+        "name": "={{ $('On form submission').item.json[\"Nama Lengkap\"] + \" - CV.pdf\" }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1kG1L378s9LBgQxdr43WCUw3vbnrYY85L",
+          "mode": "list",
+          "cachedResultName": "BNSP",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1kG1L378s9LBgQxdr43WCUw3vbnrYY85L"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -208,
+        16
+      ],
+      "id": "653ff4b4-a713-4f4f-845d-5c7e70bc0e95",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "RjAwQs25uvNQPGFR",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $json;\n\nconst technical = Number(data.it_difficulty_score || 0);\nconst teaching = Number(data.teaching_score || 0);\n\nconst finalScore = Math.round((technical * 0.7) + (teaching * 0.3));\n\nconst status = finalScore >= 7 ? \"Lolos\" : \"Tidak Lolos\";\n\nreturn [{\n  json: {\n    ...data,\n    final_score: finalScore,\n    status\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        16
+      ],
+      "id": "3681e673-08ed-454f-892f-abffa240113e",
+      "name": "Hitung Status Kandidat"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1dOsCu-Z6rI-xk-EPa1fSypYdBPKTzm13BqrEKDlqr7Y",
+          "mode": "list",
+          "cachedResultName": "Data Kandidat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dOsCu-Z6rI-xk-EPa1fSypYdBPKTzm13BqrEKDlqr7Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dOsCu-Z6rI-xk-EPa1fSypYdBPKTzm13BqrEKDlqr7Y/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nama": "={{$('On form submission').item.json['Nama Lengkap']}}",
+            "Email": "={{$('On form submission').item.json['Email']}}",
+            "Posisi": "={{$('On form submission').item.json['Posisi yang Diinginkan']}}",
+            "Status_CV": "=Sudah Terupload",
+            "Score": "={{$json.final_score}}",
+            "Status": "={{$json.status}}",
+            "CV_Link": "={{ $('Upload file').item.json.webViewLink }}",
+            "Tanggal": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Posisi",
+              "displayName": "Posisi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status_CV",
+              "displayName": "Status_CV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CV_Link",
+              "displayName": "CV_Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1296,
+        16
+      ],
+      "id": "f069e7ea-36d9-466d-a860-8ee4e5ef670b",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d2a7912d-819c-4afa-b8a0-85662a4d8f4d",
+              "leftValue": "={{ $('Hitung Status Kandidat').item.json.status }}",
+              "rightValue": "Lolos",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1504,
+        16
+      ],
+      "id": "1bbd4ccc-6c6d-42ff-a5a4-599991ba8e48",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json['Email'] }}",
+        "subject": "Hasil Seleksi Rekrutmen PT Farida Cantik",
+        "message": "={{\n\"Hallo \" + $('On form submission').item.json['Nama Lengkap'] + \",\\n\\n\" +\n\"Terima kasih telah mengikuti proses rekrutmen PT Farida Cantik.\\n\\n\" +\n\"Berdasarkan hasil seleksi administrasi dan evaluasi CV, kami dengan senang hati menginformasikan bahwa Anda dinyatakan LOLOS ke tahap berikutnya.\\n\\n\" +\n\"Tim kami akan segera menghubungi Anda untuk informasi lanjutan mengenai jadwal interview atau technical test.\\n\\n\" +\n\"Selamat dan semoga sukses!\\n\\n\" +\n\"Hormat kami,\\nTim Rekrutmen\"\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        -80
+      ],
+      "id": "07784bff-a25d-4a0a-8749-914d17824e11",
+      "name": "Send a message",
+      "webhookId": "b80e0850-dea3-44e0-9594-09cbc9026a85",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ETjmPCYwvUC3aW8I",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "Convert from PDF",
+        "url": "={{ $('Upload file').item.json.webContentLink }}",
+        "advancedOptions": {}
+      },
+      "type": "n8n-nodes-pdfco.PDFco Api",
+      "typeVersion": 1,
+      "position": [
+        0,
+        16
+      ],
+      "id": "26819acd-3c09-4037-b88f-c95f90400c1b",
+      "name": "PDFco Api",
+      "credentials": {
+        "pdfcoApi": {
+          "id": "TyBY7qZDfbLS7kou",
+          "name": "PDF.co account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let html = $json.body || $json.data || $json.html || \"\";\n\n// =========================\n// REMOVE SCRIPT & STYLE\n// =========================\nhtml = html\n  .replace(/<script[\\s\\S]*?<\\/script>/gi, '')\n  .replace(/<style[\\s\\S]*?<\\/style>/gi, '')\n  .replace(/<meta[\\s\\S]*?>/gi, '')\n  .replace(/<head[\\s\\S]*?<\\/head>/gi, '');\n\n// =========================\n// LIST ITEMS\n// =========================\nhtml = html\n  .replace(/<li[^>]*>/gi, '\\n- ')\n  .replace(/<\\/li>/gi, '');\n\n// =========================\n// PARAGRAPH & BREAKS\n// =========================\nhtml = html\n  .replace(/<\\/p>/gi, '\\n')\n  .replace(/<br\\s*\\/?>/gi, '\\n')\n  .replace(/<\\/div>/gi, '\\n')\n  .replace(/<\\/tr>/gi, '\\n');\n\n// =========================\n// REMOVE HTML TAGS\n// =========================\nhtml = html.replace(/<[^>]+>/g, ' ');\n\n// =========================\n// REMOVE PAGE NUMBER\n// =========================\nhtml = html.replace(/Page \\d+ of \\d+/gi, '');\nhtml = html.replace(/\\bPage\\s*\\d+\\b/gi, '');\nhtml = html.replace(/^\\s*\\d+\\s*$/gm, '');\n\n// =========================\n// REMOVE COMMON FOOTER\n// =========================\nhtml = html.replace(/©.*\\n/gi, '');\nhtml = html.replace(/All rights reserved.*/gi, '');\n\n// =========================\n// KEEP IMPORTANT TITLES\n// =========================\nhtml = html.replace(\n  /Curriculum Vitae|Resume|CV/gi,\n  (m) => `\\n${m}\\n`\n);\n\n// =========================\n// HTML ENTITIES\n// =========================\nhtml = html\n  .replace(/&nbsp;/g, ' ')\n  .replace(/&amp;/g, '&')\n  .replace(/&lt;/g, '<')\n  .replace(/&gt;/g, '>')\n  .replace(/&quot;/g, '\"')\n  .replace(/&#39;/g, \"'\");\n\n// =========================\n// REMOVE EXTRA SYMBOLS\n// =========================\nhtml = html\n  .replace(/[■▪•●]/g, '-')\n  .replace(/[^\\x20-\\x7E\\n]/g, ' ');\n\n// =========================\n// NORMALIZE SPACES\n// =========================\nhtml = html\n  .replace(/\\n\\s*\\n\\s*\\n+/g, '\\n\\n')\n  .replace(/[ \\t]+/g, ' ')\n  .replace(/\\s+\\n/g, '\\n')\n  .replace(/\\n\\s+/g, '\\n')\n  .trim();\n\n// =========================\n// VALIDATION\n// =========================\nif (!html || html.length < 50) {\n  return [{\n    json: {\n      clean_text: \"\",\n      parse_status: \"FAILED\"\n    }\n  }];\n}\n\n// =========================\n// SUCCESS\n// =========================\nreturn [{\n  json: {\n    clean_text: html,\n    parse_status: \"SUCCESS\"\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        16
+      ],
+      "id": "f1d5ef86-ae08-4f79-8a6c-9b2e00c5b69d",
+      "name": "Clean HTML"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Scoring Kandidat",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scoring Kandidat": {
+      "main": [
+        [
+          {
+            "node": "Parse json from AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse json from AI": {
+      "main": [
+        [
+          {
+            "node": "Hitung Status Kandidat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "PDFco Api",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hitung Status Kandidat": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "PDFco Api": {
+      "main": [
+        [
+          {
+            "node": "Clean HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean HTML": {
+      "main": [
+        [
+          {
+            "node": "Scoring Kandidat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ab76ea7b-0b6b-4e76-8c5f-4a217f50fda6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68c6ad0c867959f12144723834da81669c2c952ed778c056b9a5774d2ea03b97"
+  },
+  "id": "XDGfnszlzYSsug3r",
+  "tags": []
+}
