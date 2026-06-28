@@ -1,0 +1,1559 @@
+{
+  "name": "SISTEM WL FIX",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d511d148-c0af-4b17-91bf-3e57ae05a872",
+              "leftValue": "={{$json.valid}}",
+              "rightValue": 3,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -224,
+        144
+      ],
+      "id": "e03f7df1-b6fd-44a7-aa9b-9f76ccef5e13",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Tentukan SP').item.json.Email_Karyawan }}",
+        "subject": "=Surat Peringatan {{ $('Tentukan SP').item.json.Tingkat_SP }} - {{ $('Tentukan SP').item.json.Nama_Karyawan }}",
+        "message": "=Yth. {{ $('Tentukan SP').item.json.Nama_Karyawan }},<br><br>\n\nBersama email ini kami sampaikan Surat Peringatan \n<b>{{ $('Tentukan SP').item.json.Tingkat_SP }}</b>\nterkait pelanggaran:\n<b>{{ $('Tentukan SP').item.json.Jenis_Pelanggaran }}</b>.<br><br>\n\nBerdasarkan riwayat pelanggaran, kejadian ini tercatat sebagai pelanggaran ke-\n<b>{{ $('Tentukan SP').item.json.Pelanggaran_Ke }}</b>.<br><br>\n\nSurat Peringatan ini telah berhasil dicatat ke sistem dan terlampir dalam bentuk PDF pada email ini.<br><br>\n\nSilakan membaca dokumen Surat Peringatan yang terlampir dan melakukan perbaikan sesuai arahan yang tertulis.<br><br>\n\nTerima kasih.<br><br>\n\nHormat kami,<br>\nTim HR<br><br><b>Catatan:</b> Jika pratinjau PDF tidak terbuka di Gmail, silakan klik tombol <b>Download</b> pada lampiran untuk mengunduh dokumen.",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        0
+      ],
+      "id": "f194e651-b870-4114-8034-abe06ed8eeac",
+      "name": "Send a message",
+      "webhookId": "1ff06a61-0bab-45dc-ab68-0e2a370be8e7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ETjmPCYwvUC3aW8I",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Surat Peringatan</title>\n  <style>\n    body {\n      font-family: Arial, Helvetica, sans-serif;\n      color: #111;\n      font-size: 12px;\n      line-height: 1.65;\n      padding: 42px;\n    }\n\n    .header {\n      text-align: center;\n      border-bottom: 2px solid #111;\n      padding-bottom: 16px;\n      margin-bottom: 28px;\n    }\n\n    .company {\n      font-size: 18px;\n      font-weight: bold;\n      margin-bottom: 4px;\n    }\n\n    .address {\n      font-size: 11px;\n      color: #444;\n    }\n\n    .title {\n      text-align: center;\n      font-size: 18px;\n      font-weight: bold;\n      text-decoration: underline;\n      margin-top: 26px;\n      margin-bottom: 4px;\n    }\n\n    .number {\n      text-align: center;\n      margin-bottom: 26px;\n    }\n\n    table {\n      width: 100%;\n      border-collapse: collapse;\n      margin: 18px 0;\n    }\n\n    td {\n      vertical-align: top;\n      padding: 4px 0;\n    }\n\n    .label {\n      width: 180px;\n      font-weight: bold;\n    }\n\n    .section-title {\n      font-weight: bold;\n      margin-top: 22px;\n      margin-bottom: 6px;\n    }\n\n    .signature {\n      margin-top: 54px;\n      display: grid;\n      grid-template-columns: 1fr 1fr;\n      gap: 60px;\n      text-align: center;\n    }\n\n    .signature-space {\n      height: 70px;\n    }\n\n    .small {\n      font-size: 10px;\n      color: #555;\n      margin-top: 32px;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"header\">\n    <div class=\"company\">PT KELOMPPOK 7 AI</div>\n    <div class=\"address\">Jl. Rafles No. 10, Jakarta</div>\n  </div>\n\n  <div class=\"title\">SURAT PERINGATAN {{ $json.Tingkat_SP }}</div>\n  <div class=\"number\">Nomor: {{ $json.No_SP }}</div>\n\n  <p>\n    Yang bertanda tangan di bawah ini, mewakili perusahaan, dengan ini memberikan\n    Surat Peringatan kepada pegawai berikut:\n  </p>\n\n  <table>\n    <tr>\n      <td class=\"label\">Nama</td>\n      <td>: {{ $json.Nama_Karyawan }}</td>\n    </tr>\n    <tr>\n      <td class=\"label\">NIK</td>\n      <td>: {{ $json.NIK }}</td>\n    </tr>\n    <tr>\n      <td class=\"label\">Jabatan</td>\n      <td>: {{ $json.Jabatan }}</td>\n    </tr>\n    <tr>\n      <td class=\"label\">Departemen</td>\n      <td>: {{ $json.Departemen }}</td>\n    </tr>\n  </table>\n\n  <p class=\"section-title\">Dasar Pemberian Surat Peringatan</p>\n  <p>\n    Surat Peringatan ini diberikan karena pegawai tercatat melakukan pelanggaran\n    kategori <b>{{ $json.Kategori }}</b>, yaitu:\n    <b>{{ $json.Jenis_Pelanggaran }}</b>.\n  </p>\n\n  <p>\n    Berdasarkan riwayat pelanggaran, kejadian ini tercatat sebagai pelanggaran ke-\n    <b>{{ $json.Pelanggaran_Ke }}</b>, sehingga sistem menetapkan\n    <b>{{ $json.Tingkat_SP }}</b>.\n  </p>\n\n  <p>\n    Dasar aturan internal:\n    <b>{{ $json.Dasar_Aturan_Internal }}</b>.\n  </p>\n\n  <p class=\"section-title\">Uraian Kejadian</p>\n  <p>\n    Pada tanggal {{ $json.Tanggal_Kejadian }}, pegawai tercatat melakukan kejadian sebagai berikut:\n    {{ $json.Deskripsi_Kejadian }}\n  </p>\n\n  <p class=\"section-title\">Instruksi Perbaikan</p>\n  <p>\n    Pegawai diminta untuk melakukan perbaikan sebagai berikut:\n    {{ $json.Perbaikan_Diharapkan }}\n  </p>\n\n  <p>\n    Surat Peringatan ini berlaku sampai dengan tanggal\n    <b>{{ $json.Tanggal_Berlaku_Sampai }}</b>.\n    Apabila pelanggaran kembali terjadi dalam masa berlaku surat ini,\n    perusahaan dapat memberikan tindakan lanjutan sesuai peraturan perusahaan.\n  </p>\n\n  <p>\n    Demikian Surat Peringatan ini dibuat untuk diperhatikan dan dilaksanakan dengan sebaik-baiknya.\n  </p>\n\n  <div class=\"signature\">\n    <div>\n      <p>Tim HR</p>\n      <div class=\"signature-space\"></div>\n      <p><b>{{ $json.Nama_HR }}</b></p>\n    </div>\n\n    <div>\n      <p>Pegawai yang Bersangkutan</p>\n      <div class=\"signature-space\"></div>\n      <p><b>{{ $json.Nama_Karyawan }}</b></p>\n    </div>\n  </div>\n\n  <p class=\"small\">\n    Dokumen ini dibuat otomatis oleh Sistem Warning Letter.\n  </p>\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "48e0d008-b0e6-43a4-b9c8-6a7e86a8a6b6",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "html_content": "={{ $json.html }}",
+        "output_format": "file"
+      },
+      "type": "n8n-nodes-htmlcsstopdf.htmlcsstopdf",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "572c3649-f591-4bc5-8017-91d6bc0cfc8b",
+      "name": "Convert HTML to PDF",
+      "credentials": {
+        "htmlcsstopdfApi": {
+          "id": "woNMaVKgOJxmqeCR",
+          "name": "HTML to PDF account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Input Pelanggaran Karyawan",
+        "formDescription": "Form ini digunakan Tim HR untuk menginput data pegawai yang melakukan pelanggaran.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "NIK"
+            },
+            {
+              "fieldLabel": "Jenis_Pelanggaran",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Terlambat kerja"
+                  },
+                  {
+                    "option": "Tidak masuk tanpa keterangan"
+                  },
+                  {
+                    "option": "Tidak mematuhi instruksi kerja"
+                  },
+                  {
+                    "option": "Pelanggaran berat kedisiplinan"
+                  },
+                  {
+                    "option": "Merugikan Perusahaan"
+                  },
+                  {
+                    "option": "Merusak fasilitas perusahaan"
+                  },
+                  {
+                    "option": "Membully"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Tanggal_Kejadian",
+              "fieldType": "date"
+            },
+            {
+              "fieldLabel": "Deskripsi_Kejadian",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Bukti_URL"
+            },
+            {
+              "fieldLabel": "Nama_HR"
+            },
+            {
+              "fieldLabel": "Email_HR",
+              "fieldType": "email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -1728,
+        144
+      ],
+      "id": "080a0dd5-1132-4416-a9b2-6af784b7faf6",
+      "name": "On form submission",
+      "webhookId": "adc0658e-99cb-407b-9ddc-915b77a3ebc3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI",
+          "mode": "list",
+          "cachedResultName": "Sistem Warning Letter Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 446717891,
+          "mode": "list",
+          "cachedResultName": "Pengajuan_Pelanggaran",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit#gid=446717891"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID_Pengajuan": "={{$json.ID_Pengajuan}}",
+            "Tingkat_SP": "=-",
+            "No_SP": "=-",
+            "Catatan_Error": "=-",
+            "Status_Proses": "=PENDING",
+            "Email_HR": "={{$json.Email_HR}}",
+            "Nama_HR": "={{$json.Nama_HR}}",
+            "Bukti_URL": "={{$json.Bukti_URL}}",
+            "Deskripsi_Kejadian": "={{$json.Deskripsi_Kejadian}}",
+            "Tanggal_Kejadian": "={{$json.Tanggal_Kejadian}}",
+            "Jenis_Pelanggaran": "={{$json.Jenis_Pelanggaran}}",
+            "Email_Karyawan": "=-",
+            "Nama_Karyawan": "=-",
+            "NIK": "={{$json.NIK}}",
+            "Timestamp": "={{$json.Timestamp}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID_Pengajuan",
+              "displayName": "ID_Pengajuan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NIK",
+              "displayName": "NIK",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama_Karyawan",
+              "displayName": "Nama_Karyawan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email_Karyawan",
+              "displayName": "Email_Karyawan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jenis_Pelanggaran",
+              "displayName": "Jenis_Pelanggaran",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal_Kejadian",
+              "displayName": "Tanggal_Kejadian",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Deskripsi_Kejadian",
+              "displayName": "Deskripsi_Kejadian",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Bukti_URL",
+              "displayName": "Bukti_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama_HR",
+              "displayName": "Nama_HR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email_HR",
+              "displayName": "Email_HR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status_Proses",
+              "displayName": "Status_Proses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Catatan_Error",
+              "displayName": "Catatan_Error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "No_SP",
+              "displayName": "No_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tingkat_SP",
+              "displayName": "Tingkat_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1296,
+        144
+      ],
+      "id": "b448f659-c8f8-4d48-9ff4-4db46fd5c469",
+      "name": "Catat Pengajuan",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI",
+          "mode": "list",
+          "cachedResultName": "Sistem Warning Letter Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1285495092,
+          "mode": "list",
+          "cachedResultName": "Data_Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit#gid=1285495092"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "NIK",
+              "lookupValue": "={{$('Edit Fields - Normalisasi Input').item.json.NIK}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1072,
+        144
+      ],
+      "id": "31fab0a3-3f85-4242-beeb-eb8ede27577f",
+      "name": "Ambil Master Karyawan",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI",
+          "mode": "list",
+          "cachedResultName": "Sistem Warning Letter Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Aturan Pelanggaran",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Jenis_Pelanggaran",
+              "lookupValue": "={{$('Edit Fields - Normalisasi Input').item.json.Jenis_Pelanggaran}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -848,
+        144
+      ],
+      "id": "f61721db-6d4d-496c-a32f-f035d09631dd",
+      "name": "Ambil Aturan SP",
+      "executeOnce": false,
+      "retryOnFail": false,
+      "notesInFlow": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI",
+          "mode": "list",
+          "cachedResultName": "Sistem Warning Letter Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 22932665,
+          "mode": "list",
+          "cachedResultName": "Riwayat_SP",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit#gid=22932665"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "NIK",
+              "lookupValue": "={{$('Edit Fields - Normalisasi Input').item.json.NIK}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -640,
+        144
+      ],
+      "id": "87903e92-9ad7-413d-b362-57ce3a9125a9",
+      "name": "Ambil Riwayat SP",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Tentukan SP').item.json.Email_HR || 'imfaravi@gmail.com' }}",
+        "subject": "=Pengajuan Surat Peringatan Gagal Diproses",
+        "message": "=Yth. {{ $('Tentukan SP').item.json.Nama_HR }},<br><br>\n\nPengajuan Surat Peringatan untuk NIK \n<b>{{ $('Tentukan SP').item.json.NIK }}</b> belum dapat diproses.<br><br>\n\nAlasan:<br>\n<b>{{ $('Tentukan SP').item.json.error_message }}</b><br><br>\n\nSilakan periksa kembali data pegawai, aturan pelanggaran, atau riwayat SP pada Google Sheets.<br><br>\n\nTerima kasih.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        320
+      ],
+      "id": "dcf0cd70-493b-479a-8be8-a960bdd11a7a",
+      "name": "Kirim Error Manager",
+      "webhookId": "301efe0a-b69d-4af6-97c5-1cbe90e8c741",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ETjmPCYwvUC3aW8I",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI",
+          "mode": "list",
+          "cachedResultName": "Sistem Warning Letter Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 22932665,
+          "mode": "list",
+          "cachedResultName": "Riwayat_SP",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit#gid=22932665"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "No_SP": "={{$('Tentukan SP').item.json.No_SP}}",
+            "Tanggal_SP": "={{$('Tentukan SP').item.json.Tanggal_SP}}\n",
+            "Created_At": "={{$now}}",
+            "Email_Terkirim": "=BELUM",
+            "Status_SP": "=AKTIF",
+            "Perbaikan_Diharapkan": "={{$('Tentukan SP').item.json.Perbaikan_Diharapkan}}",
+            "Dasar_Aturan_Internal": "={{$('Tentukan SP').item.json.Dasar_Aturan_Internal}}",
+            "Deskripsi_Kejadian": "={{$('Tentukan SP').item.json.Deskripsi_Kejadian}}",
+            "Tingkat_SP": "={{$('Tentukan SP').item.json.Tingkat_SP}}",
+            "Jenis_Pelanggaran": "={{$('Tentukan SP').item.json.Jenis_Pelanggaran}}",
+            "Departemen": "={{$('Tentukan SP').item.json.Departemen}}",
+            "Jabatan": "={{$('Tentukan SP').item.json.Jabatan}}",
+            "Email_Karyawan": "={{$('Tentukan SP').item.json.Email_Karyawan}}",
+            "Nama_Karyawan": "={{$('Tentukan SP').item.json.Nama_Karyawan}}",
+            "NIK": "={{$('Tentukan SP').item.json.NIK}}",
+            "Tanggal_Berlaku_Sampai": "={{$('Tentukan SP').item.json.Tanggal_Berlaku_Sampai}}",
+            "Nama_HR": "={{$('Tentukan SP').item.json.Nama_HR}}",
+            "Email_HR": "={{$('Tentukan SP').item.json.Email_HR}}",
+            "Pelanggaran_Ke": "={{$('Tentukan SP').item.json.Pelanggaran_Ke}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "No_SP",
+              "displayName": "No_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal_SP",
+              "displayName": "Tanggal_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal_Berlaku_Sampai",
+              "displayName": "Tanggal_Berlaku_Sampai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NIK",
+              "displayName": "NIK",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama_Karyawan",
+              "displayName": "Nama_Karyawan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email_Karyawan",
+              "displayName": "Email_Karyawan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jabatan",
+              "displayName": "Jabatan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Departemen",
+              "displayName": "Departemen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jenis_Pelanggaran",
+              "displayName": "Jenis_Pelanggaran",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Kategori",
+              "displayName": "Kategori",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tingkat_SP",
+              "displayName": "Tingkat_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pelanggaran_Ke",
+              "displayName": "Pelanggaran_Ke",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Deskripsi_Kejadian",
+              "displayName": "Deskripsi_Kejadian",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Dasar_Aturan_Internal",
+              "displayName": "Dasar_Aturan_Internal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Perbaikan_Diharapkan",
+              "displayName": "Perbaikan_Diharapkan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama_HR",
+              "displayName": "Nama_HR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email_HR",
+              "displayName": "Email_HR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status_SP",
+              "displayName": "Status_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email_Terkirim",
+              "displayName": "Email_Terkirim",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Created_At",
+              "displayName": "Created_At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0b8fe858-b4f7-433f-a9c8-8bf0ad3f89ba",
+      "name": "Append Riwayat SP",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ebb0bc65-d281-4660-8f5d-4ef7d5366948",
+              "name": "ID_Pengajuan",
+              "value": "={{\"PLG-\" + Date.now()}}",
+              "type": "string"
+            },
+            {
+              "id": "f3189782-175f-43b1-ab5c-df77216f3de1",
+              "name": "Timestamp",
+              "value": "={{$now}}",
+              "type": "string"
+            },
+            {
+              "id": "6c22e395-1235-4769-9cac-36afbb59f9b8",
+              "name": "NIK",
+              "value": "={{$json.NIK}}",
+              "type": "string"
+            },
+            {
+              "id": "6a9130c8-db8c-4c4f-8cc6-6de471996038",
+              "name": "Jenis_Pelanggaran",
+              "value": "={{$json.Jenis_Pelanggaran}}",
+              "type": "string"
+            },
+            {
+              "id": "07676589-a13d-4cc3-a903-d83962ff1add",
+              "name": "Tanggal_Kejadian",
+              "value": "={{$json.Tanggal_Kejadian}}",
+              "type": "string"
+            },
+            {
+              "id": "5600ae57-0f72-4112-93d5-d488304032d1",
+              "name": "Deskripsi_Kejadian",
+              "value": "={{$json.Deskripsi_Kejadian}}",
+              "type": "string"
+            },
+            {
+              "id": "fd140f58-104c-498a-84a9-b4b90d4c86dd",
+              "name": "Bukti_URL",
+              "value": "={{$json.Bukti_URL || \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "f60f562f-a77a-4244-b252-fa5c59aa05e3",
+              "name": "Nama_HR",
+              "value": "={{$json.Nama_HR}}",
+              "type": "string"
+            },
+            {
+              "id": "d291b3fa-6fa2-4723-82e1-8a1808bebc68",
+              "name": "Email_HR",
+              "value": "={{$json.Email_HR}}",
+              "type": "string"
+            },
+            {
+              "id": "e3efbcca-3ccd-46d8-a22a-ab826b11dd55",
+              "name": "Status_Proses",
+              "value": "=PENDING",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1520,
+        144
+      ],
+      "id": "f40d8e25-f1e5-47db-bce0-222e0b60b791",
+      "name": "Edit Fields - Normalisasi Input"
+    },
+    {
+      "parameters": {
+        "jsCode": "function clean(value) {\n  return String(value || \"\").trim();\n}\n\nfunction lower(value) {\n  return clean(value).toLowerCase();\n}\n\nfunction getTodayJakarta() {\n  const now = new Date();\n  const jakartaDate = now.toLocaleDateString(\"en-CA\", {\n    timeZone: \"Asia/Jakarta\"\n  });\n  return new Date(jakartaDate + \"T00:00:00+07:00\");\n}\n\nfunction formatDate(date) {\n  return date.toISOString().slice(0, 10);\n}\n\nfunction addMonths(date, months) {\n  const result = new Date(date);\n  result.setMonth(result.getMonth() + months);\n  return result;\n}\n\nconst input = $(\"Edit Fields - Normalisasi Input\").first().json;\n\nconst dataKaryawan = $items(\"Ambil Master Karyawan\")\n  .map(item => item.json)\n  .filter(row => clean(row.NIK));\n\nconst aturanPelanggaran = $items(\"Ambil Aturan SP\")\n  .map(item => item.json)\n  .filter(row => clean(row.Jenis_Pelanggaran));\n\nconst riwayatSP = $items(\"Ambil Riwayat SP\")\n  .map(item => item.json)\n  .filter(row => clean(row.NIK));\n\nconst nik = clean(input.NIK);\nconst jenisPelanggaran = clean(input.Jenis_Pelanggaran);\n\nfunction error(message) {\n  return [{\n    json: {\n      valid: false,\n      error_message: message,\n      ID_Pengajuan: input.ID_Pengajuan,\n      NIK: nik,\n      Nama_HR: input.Nama_HR,\n      Email_HR: input.Email_HR\n    }\n  }];\n}\n\nif (!nik) {\n  return error(\"NIK tidak boleh kosong.\");\n}\n\nif (!jenisPelanggaran) {\n  return error(\"Jenis pelanggaran tidak boleh kosong.\");\n}\n\nif (!clean(input.Tanggal_Kejadian)) {\n  return error(\"Tanggal kejadian tidak boleh kosong.\");\n}\n\nif (!clean(input.Deskripsi_Kejadian)) {\n  return error(\"Deskripsi kejadian tidak boleh kosong.\");\n}\n\nconst karyawan = dataKaryawan.find(row => clean(row.NIK) === nik);\n\nif (!karyawan) {\n  return error(\"NIK karyawan tidak ditemukan di sheet Data_Karyawan.\");\n}\n\nif (lower(karyawan.Status_Karyawan) !== \"aktif\") {\n  return error(\"Karyawan tidak berstatus aktif.\");\n}\n\nif (!clean(karyawan.Email_Karyawan)) {\n  return error(\"Email karyawan kosong di sheet Data_Karyawan.\");\n}\n\nconst aturan = aturanPelanggaran.find(row => {\n  return lower(row.Jenis_Pelanggaran) === lower(jenisPelanggaran);\n});\n\nif (!aturan) {\n  return error(\"Jenis pelanggaran belum tersedia di sheet Aturan Pelanggaran.\");\n}\n\nconst kategori = lower(aturan.Kategori);\n\nif (![\"ringan\", \"sedang\", \"berat\"].includes(kategori)) {\n  return error(\"Kategori pelanggaran harus Ringan, Sedang, atau Berat.\");\n}\n\nconst riwayatAktif = riwayatSP.filter(row => {\n  const sameNik = clean(row.NIK) === nik;\n  const statusSP = lower(row.Status_SP || \"AKTIF\");\n  return sameNik && statusSP !== \"dibatalkan\";\n});\n\nconst jumlahPelanggaranSebelumnya = riwayatAktif.length;\nconst pelanggaranKe = jumlahPelanggaranSebelumnya + 1;\n\nlet tingkatSPNumber = 1;\n\nif (kategori === \"berat\" || pelanggaranKe >= 3) {\n  tingkatSPNumber = 3;\n} else if (kategori === \"sedang\" || pelanggaranKe >= 2) {\n  tingkatSPNumber = 2;\n} else {\n  tingkatSPNumber = 1;\n}\n\nconst tingkatSP = \"SP\" + tingkatSPNumber;\n\nconst today = getTodayJakarta();\nconst masaBerlakuBulan = Number(aturan.Masa_Berlaku_Bulan || 6);\nconst tanggalBerlakuSampai = addMonths(today, masaBerlakuBulan);\n\nconst noSP =\n  \"SP-\" +\n  today.getFullYear() +\n  \"-\" +\n  nik +\n  \"-\" +\n  Date.now().toString().slice(-6);\n\nreturn [{\n  json: {\n    valid: true,\n\n    ID_Pengajuan: input.ID_Pengajuan,\n    No_SP: noSP,\n\n    Tanggal_SP: formatDate(today),\n    Tanggal_Berlaku_Sampai: formatDate(tanggalBerlakuSampai),\n\n    NIK: nik,\n    Nama_Karyawan: karyawan.Nama_Karyawan,\n    Email_Karyawan: karyawan.Email_Karyawan,\n    Jabatan: karyawan.Jabatan,\n    Departemen: karyawan.Departemen,\n\n    Jenis_Pelanggaran: jenisPelanggaran,\n    Kategori: aturan.Kategori,\n    Tingkat_SP: tingkatSP,\n    Pelanggaran_Ke: pelanggaranKe,\n\n    Dasar_Aturan_Internal: aturan.Dasar_Aturan_Internal,\n    Perbaikan_Diharapkan: aturan.Perbaikan_Diharapkan,\n\n    Tanggal_Kejadian: input.Tanggal_Kejadian,\n    Deskripsi_Kejadian: input.Deskripsi_Kejadian,\n    Bukti_URL: input.Bukti_URL,\n\n    Nama_HR: input.Nama_HR,\n    Email_HR: input.Email_HR,\n\n    Jumlah_Pelanggaran_Sebelumnya: jumlahPelanggaranSebelumnya\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -416,
+        144
+      ],
+      "id": "c6163bbb-f01a-49a2-8500-b1cd9e50a308",
+      "name": "Tentukan SP"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI",
+          "mode": "list",
+          "cachedResultName": "Sistem Warning Letter Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 446717891,
+          "mode": "list",
+          "cachedResultName": "Pengajuan_Pelanggaran",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit#gid=446717891"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID_Pengajuan": "={{$('Tentukan SP').item.json.ID_Pengajuan}}",
+            "Nama_Karyawan": "={{$('Tentukan SP').item.json.Nama_Karyawan}}",
+            "Email_Karyawan": "={{$('Tentukan SP').item.json.Email_Karyawan}}",
+            "Status_Proses": "=SELESAI",
+            "No_SP": "={{$('Tentukan SP').item.json.No_SP}}",
+            "Catatan_Error": "=-",
+            "Tingkat_SP": "={{$('Tentukan SP').item.json.Tingkat_SP}}",
+            "Email_HR": "={{$('Tentukan SP').item.json.Email_HR}}",
+            "Nama_HR": "={{$('Tentukan SP').item.json.Nama_HR}}",
+            "Bukti_URL": "={{$('Tentukan SP').item.json.Bukti_URL}}",
+            "Deskripsi_Kejadian": "={{$('Tentukan SP').item.json.Deskripsi_Kejadian}}",
+            "Tanggal_Kejadian": "={{$('Tentukan SP').item.json.Tanggal_Kejadian}}",
+            "Jenis_Pelanggaran": "={{$('Tentukan SP').item.json.Jenis_Pelanggaran}}",
+            "NIK": "={{$('Tentukan SP').item.json.NIK}}",
+            "Timestamp": "={{$('Edit Fields - Normalisasi Input').item.json.Timestamp}}"
+          },
+          "matchingColumns": [
+            "ID_Pengajuan"
+          ],
+          "schema": [
+            {
+              "id": "ID_Pengajuan",
+              "displayName": "ID_Pengajuan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "NIK",
+              "displayName": "NIK",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama_Karyawan",
+              "displayName": "Nama_Karyawan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email_Karyawan",
+              "displayName": "Email_Karyawan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jenis_Pelanggaran",
+              "displayName": "Jenis_Pelanggaran",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal_Kejadian",
+              "displayName": "Tanggal_Kejadian",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Deskripsi_Kejadian",
+              "displayName": "Deskripsi_Kejadian",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Bukti_URL",
+              "displayName": "Bukti_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama_HR",
+              "displayName": "Nama_HR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email_HR",
+              "displayName": "Email_HR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status_Proses",
+              "displayName": "Status_Proses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Catatan_Error",
+              "displayName": "Catatan_Error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "No_SP",
+              "displayName": "No_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tingkat_SP",
+              "displayName": "Tingkat_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "f461e2e9-4553-4c70-aef4-a412ec11b66e",
+      "name": "Update Pengajuan SELESAI",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI",
+          "mode": "list",
+          "cachedResultName": "Sistem Warning Letter Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 446717891,
+          "mode": "list",
+          "cachedResultName": "Pengajuan_Pelanggaran",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit#gid=446717891"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID_Pengajuan": "={{$('Tentukan SP').item.json.ID_Pengajuan}}",
+            "Nama_Karyawan": "={{$('Tentukan SP').item.json.Nama_Karyawan}}",
+            "Email_Karyawan": "={{$('Tentukan SP').item.json.Email_Karyawan}}",
+            "Status_Proses": "=ERROR",
+            "No_SP": "={{$('Tentukan SP').item.json.No_SP}}",
+            "Catatan_Error": "={{$('Tentukan SP').item.json.error_message}}",
+            "Tingkat_SP": "={{$('Tentukan SP').item.json.Tingkat_SP}}",
+            "Email_HR": "={{$('Tentukan SP').item.json.Email_HR",
+            "Nama_HR": "={{$('Tentukan SP').item.json.Nama_HR}}",
+            "Bukti_URL": "={{$('Tentukan SP').item.json.Bukti_URL}}",
+            "Deskripsi_Kejadian": "={{$('Tentukan SP').item.json.Deskripsi_Kejadian}}",
+            "Tanggal_Kejadian": "={{$('Tentukan SP').item.json.Tanggal_Kejadian}}",
+            "Jenis_Pelanggaran": "={{$('Tentukan SP').item.json.Jenis_Pelanggaran}}",
+            "NIK": "={{$('Tentukan SP').item.json.NIK}}",
+            "Timestamp": "={{$('Edit Fields - Normalisasi Input').item.json.Timestamp}}"
+          },
+          "matchingColumns": [
+            "ID_Pengajuan"
+          ],
+          "schema": [
+            {
+              "id": "ID_Pengajuan",
+              "displayName": "ID_Pengajuan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "NIK",
+              "displayName": "NIK",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama_Karyawan",
+              "displayName": "Nama_Karyawan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email_Karyawan",
+              "displayName": "Email_Karyawan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jenis_Pelanggaran",
+              "displayName": "Jenis_Pelanggaran",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal_Kejadian",
+              "displayName": "Tanggal_Kejadian",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Deskripsi_Kejadian",
+              "displayName": "Deskripsi_Kejadian",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Bukti_URL",
+              "displayName": "Bukti_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama_HR",
+              "displayName": "Nama_HR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email_HR",
+              "displayName": "Email_HR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status_Proses",
+              "displayName": "Status_Proses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Catatan_Error",
+              "displayName": "Catatan_Error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "No_SP",
+              "displayName": "No_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tingkat_SP",
+              "displayName": "Tingkat_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16,
+        320
+      ],
+      "id": "2fd04f7c-0cd5-474f-8f45-eefe0fa20255",
+      "name": "Update Pengajuan ERROR1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI",
+          "mode": "list",
+          "cachedResultName": "Sistem Warning Letter Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 22932665,
+          "mode": "list",
+          "cachedResultName": "Riwayat_SP",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uZDfOtSJDknCOTUW0R6rt5firIjzRzc1F1VxsSfZlBI/edit#gid=22932665"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "No_SP": "={{ $('Tentukan SP').item.json.No_SP }}",
+            "Email_Terkirim": "=YA",
+            "Status_SP": "=AKTIF"
+          },
+          "matchingColumns": [
+            "No_SP"
+          ],
+          "schema": [
+            {
+              "id": "No_SP",
+              "displayName": "No_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email_Terkirim",
+              "displayName": "Email_Terkirim",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status_SP",
+              "displayName": "Status_SP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        0
+      ],
+      "id": "1e2490bc-d84b-4d16-9e89-10e99dadb131",
+      "name": "Update Riwayat Email Terkirim",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "amEVrLxfsEN3HqaB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\n\nconst binaryKeys = Object.keys(item.binary || {});\n\nif (binaryKeys.length === 0) {\n  throw new Error('Tidak ada binary file dari node Convert HTML to PDF.');\n}\n\nconst sourceKey = binaryKeys.includes('data') ? 'data' : binaryKeys[0];\n\nconst buffer = await this.helpers.getBinaryDataBuffer(0, sourceKey);\n\nconst header = buffer.subarray(0, 4).toString('utf8');\n\nif (header !== '%PDF') {\n  const preview = buffer.subarray(0, 120).toString('utf8');\n  const mime = item.binary[sourceKey]?.mimeType || '-';\n  const size = buffer.length;\n\n  throw new Error(\n    `File bukan PDF valid. Header: ${header}, Mime: ${mime}, Size: ${size} bytes, Preview: ${preview}`\n  );\n}\n\nconst sp = $('Tentukan SP').first().json;\n\nconst safeName = String(sp.Nama_Karyawan || 'Karyawan')\n  .replace(/[^a-zA-Z0-9-_ ]/g, '')\n  .replace(/\\s+/g, '_');\n\nconst fileName = `Surat_Peringatan_${sp.Tingkat_SP || 'SP'}_${safeName}.pdf`;\n\nitem.binary = {\n  data: await this.helpers.prepareBinaryData(buffer, fileName, 'application/pdf')\n};\n\nreturn [item];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        0
+      ],
+      "id": "1f92001f-4779-4594-b28a-b637909b1f88",
+      "name": "Validasi dan Rapikan PDF"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append Riwayat SP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Pengajuan ERROR1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update Riwayat Email Terkirim",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Convert HTML to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert HTML to PDF": {
+      "main": [
+        [
+          {
+            "node": "Validasi dan Rapikan PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - Normalisasi Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Catat Pengajuan": {
+      "main": [
+        [
+          {
+            "node": "Ambil Master Karyawan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Master Karyawan": {
+      "main": [
+        [
+          {
+            "node": "Ambil Aturan SP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Aturan SP": {
+      "main": [
+        [
+          {
+            "node": "Ambil Riwayat SP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Riwayat SP": {
+      "main": [
+        [
+          {
+            "node": "Tentukan SP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Riwayat SP": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - Normalisasi Input": {
+      "main": [
+        [
+          {
+            "node": "Catat Pengajuan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tentukan SP": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Pengajuan ERROR1": {
+      "main": [
+        [
+          {
+            "node": "Kirim Error Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Riwayat Email Terkirim": {
+      "main": [
+        [
+          {
+            "node": "Update Pengajuan SELESAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validasi dan Rapikan PDF": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1c974787-8e09-482a-8faa-db0f109be02f",
+  "meta": {
+    "instanceId": "68c6ad0c867959f12144723834da81669c2c952ed778c056b9a5774d2ea03b97"
+  },
+  "nodeGroups": [],
+  "id": "BUdumJAlYrMQEl8u",
+  "tags": []
+}
